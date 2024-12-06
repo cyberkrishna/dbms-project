@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Stats Analysis</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+      </div>
+      <div class="navbar-title">Crickstats</div>
+      <ul class="navbar-nav">
+        <li><a class="navbar-link" href="/">Home</a></li>
+        <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+        <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+        <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+        <!-- Profile Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Profile <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/edit_preferences">Edit Preferences</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Section -->
+    <div class="enquire_section">
+      <h1>{{ player_data.player_name }}</h1>
+      <p>
+        Country: 
+        {{ player_data.country }}
+      </p>
+
+      <h2>General Information</h2>
+      <ul>
+        <li>Role: {{ player_data.role }}</li>
+        <li>Batting Style: {{ player_data.batting_style }}</li>
+        <li>Bowling Style: {{ player_data.bowling_style }}</li>
+      </ul>
+
+      <!-- ODI Stats Table -->
+      <h2>ODI Stats</h2>
+      <table class="stats-table">
+        <tr><th colspan="2">Batting</th></tr>
+        <tr><td>Matches</td><td>{{ player_data.odi_batting_matches }}</td></tr>
+        <tr><td>Innings</td><td>{{ player_data.odi_batting_innings }}</td></tr>
+        <tr><td>Runs</td><td>{{ player_data.odi_batting_runs }}</td></tr>
+        <tr><td>Highest Score</td><td>{{ player_data.odi_batting_high_score }}</td></tr>
+        <tr><td>Average</td><td>{{ player_data.odi_batting_average }}</td></tr>
+        <tr><td>Strike Rate</td><td>{{ player_data.odi_batting_strike_rate }}</td></tr>
+        <tr><td>Hundreds</td><td>{{ player_data.odi_batting_hundreds }}</td></tr>
+        <tr><td>Fifties</td><td>{{ player_data.odi_batting_fifties }}</td></tr>
+
+        {% if player_data.role in ["all-rounder", "bowler"] %}
+          <tr><th colspan="2">Bowling</th></tr>
+          <tr><td>Matches</td><td>{{ player_data.odi_bowling_matches }}</td></tr>
+          <tr><td>Innings</td><td>{{ player_data.odi_bowling_innings }}</td></tr>
+          <tr><td>Wickets</td><td>{{ player_data.odi_bowling_total_wickets }}</td></tr>
+          <tr><td>Best Bowling in Innings</td><td>{{ player_data.odi_bowling_best_innings }}</td></tr>
+          <tr><td>Average</td><td>{{ player_data.odi_bowling_average }}</td></tr>
+          <tr><td>Economy</td><td>{{ player_data.odi_bowling_economy }}</td></tr>
+          <tr><td>Strike Rate</td><td>{{ player_data.odi_bowling_strike_rate }}</td></tr>
+          <tr><td>5-Wicket Hauls</td><td>{{ player_data.odi_bowling_five_wicket_hauls }}</td></tr>
+        {% endif %}
+      </table>
+
+      <!-- Similar tables for T20 and Test stats can be added here -->
+      <h2>T20 Stats</h2>
+<table class="stats-table">
+  <tr><th colspan="2">Batting</th></tr>
+  <tr><td>Matches</td><td>{{ player_data.t20_batting_matches }}</td></tr>
+  <tr><td>Innings</td><td>{{ player_data.t20_batting_innings }}</td></tr>
+  <tr><td>Runs</td><td>{{ player_data.t20_batting_runs }}</td></tr>
+  <tr><td>Highest Score</td><td>{{ player_data.t20_batting_high_score }}</td></tr>
+  <tr><td>Average</td><td>{{ player_data.t20_batting_average }}</td></tr>
+  <tr><td>Strike Rate</td><td>{{ player_data.t20_batting_strike_rate }}</td></tr>
+  <tr><td>Hundreds</td><td>{{ player_data.t20_batting_hundreds }}</td></tr>
+  <tr><td>Fifties</td><td>{{ player_data.t20_batting_fifties }}</td></tr>
+</table>
+
+{% if player_data.role in ["all-rounder", "bowler"] %}
+  <table class="stats-table">
+    <tr><th colspan="2">Bowling</th></tr>
+    <tr><td>Matches</td><td>{{ player_data.t20_bowling_matches }}</td></tr>
+    <tr><td>Innings</td><td>{{ player_data.t20_bowling_innings }}</td></tr>
+    <tr><td>Wickets</td><td>{{ player_data.t20_bowling_total_wickets }}</td></tr>
+    <tr><td>Best Bowling in Innings</td><td>{{ player_data.t20_bowling_best_innings }}</td></tr>
+    <tr><td>Average</td><td>{{ player_data.t20_bowling_average }}</td></tr>
+    <tr><td>Economy</td><td>{{ player_data.t20_bowling_economy }}</td></tr>
+    <tr><td>Strike Rate</td><td>{{ player_data.t20_bowling_strike_rate }}</td></tr>
+    <tr><td>5-Wicket Hauls</td><td>{{ player_data.t20_bowling_five_wicket_hauls }}</td></tr>
+  </table>
+{% endif %}
+
+<h2>Test Stats</h2>
+<table class="stats-table">
+  <tr><th colspan="2">Batting</th></tr>
+  <tr><td>Matches</td><td>{{ player_data.test_batting_matches }}</td></tr>
+  <tr><td>Innings</td><td>{{ player_data.test_batting_innings }}</td></tr>
+  <tr><td>Runs</td><td>{{ player_data.test_batting_runs }}</td></tr>
+  <tr><td>Highest Score</td><td>{{ player_data.test_batting_high_score }}</td></tr>
+  <tr><td>Average</td><td>{{ player_data.test_batting_average }}</td></tr>
+  <tr><td>Strike Rate</td><td>{{ player_data.test_batting_strike_rate }}</td></tr>
+  <tr><td>Hundreds</td><td>{{ player_data.test_batting_hundreds }}</td></tr>
+  <tr><td>Fifties</td><td>{{ player_data.test_batting_fifties }}</td></tr>
+</table>
+
+{% if player_data.role in ["all-rounder", "bowler"] %}
+  <table class="stats-table">
+    <tr><th colspan="2">Bowling</th></tr>
+    <tr><td>Matches</td><td>{{ player_data.test_bowling_matches }}</td></tr>
+    <tr><td>Innings</td><td>{{ player_data.test_bowling_innings }}</td></tr>
+    <tr><td>Wickets</td><td>{{ player_data.test_bowling_total_wickets }}</td></tr>
+    <tr><td>Best Bowling in Innings</td><td>{{ player_data.test_bowling_best_innings }}</td></tr>
+    <tr><td>Average</td><td>{{ player_data.test_bowling_average }}</td></tr>
+    <tr><td>Economy</td><td>{{ player_data.test_bowling_economy }}</td></tr>
+    <tr><td>Strike Rate</td><td>{{ player_data.test_bowling_strike_rate }}</td></tr>
+    <tr><td>5-Wicket Hauls</td><td>{{ player_data.test_bowling_five_wicket_hauls }}</td></tr>
+  </table>
+{% endif %}
+
+
+    <!-- Additional styling directly included for simplicity -->
+    <style>
+      /* General Styling */
+      * {left:0px;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      
+      body, html {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      .container {
+        padding-top: 100px; /* Offset for fixed navbar */
+      }
+
+      /* Navbar Styling */
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 70px;
+        background-color: #004aad; /* Primary color */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        z-index: 10;
+        padding: 0 20px; /* Space around navbar content */
+        border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+      }
+      
+      .navbar-logo img {
+        width: 60px; /* Adjust size for better proportion */
+        height: auto;
+        margin-left:-290px;
+      }
+      
+      .navbar-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: white;
+        
+        text-transform: uppercase;
+        margin-left: -500px; /* Adds spacing between logo and title */
+      }
+      
+      .navbar-nav {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        gap: 15px; /* Adds spacing between navbar links */
+        margin: 0;
+        padding: 0;
+      }
+      
+      .navbar-link {
+        position: relative;
+        text-decoration: none; /* Remove underline for links */
+        color: white;
+        padding: 10px 20px; /* Larger padding for button-like appearance */
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        border: 2px solid transparent; /* Adds subtle border for hover effect */
+        border-radius: 5px; /* Rounded corners */
+        overflow: hidden; /* Ensures hover effects stay inside the button */
+        transition: all 0.4s ease; /* Smooth transition for hover effects */
+      }
+      
+      .navbar-link:hover {
+        background-color: #ffffff; /* Background changes to white on hover */
+        color: #004aad; /* Text color changes to match the navbar background */
+        border-color: #ffffff; /* Border becomes visible */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+        text-decoration: none; /* Ensures no underline on hover */
+      }
+      
+      /* Pseudo-Elements for Animated Border */
+      .navbar-link::before,
+      .navbar-link::after {
+        content: '';
+        position: absolute;
+        background: white;
+        height: 2px;
+        width: 0;
+        transition: all 1s ease;
+      }
+      
+      .navbar-link::before {
+        top: 0; /* Top border effect */
+        left: 0;
+      }
+      
+      .navbar-link::after {
+        bottom: 0; /* Bottom border effect */
+        right: 0;
+      }
+      
+      .navbar-link:hover::before,
+      .navbar-link:hover::after {
+        width: 100%; /* Expands the border effect on hover */
+      }
+      
+      
+
+      h1, h2 {
+        color: #333;
+      }
+
+      /* Table Styling */
+.stats-table {
+  width: 100%;
+  border: 1px solid #dddddd; /* Subtle border for the table */
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.stats-table th {
+  background-color: #000; /* Black background for header */
+  color: white; /* White text for header */
+  text-transform: uppercase; /* Uppercase text for headers */
+  padding: 15px;
+  text-align: center; /* Center align text in header */
+}
+
+.stats-table td {
+  padding: 15px;
+  text-align: center; /* Center align text in cells */
+  color: #333; /* Dark text for data */
+}
+
+.stats-table tr:nth-child(odd) {
+  background-color: #f9f9f9; /* Light gray for alternate rows */
+}
+
+.stats-table tr:nth-child(even) {
+  background-color: #ffffff; /* White for other rows */
+}
+
+.stats-table tr:hover {
+  background-color: #f0f0f0; /* Highlight row on hover */
+}
+
+.stats-table th:first-child, 
+.stats-table td:first-child {
+  text-align: left; /* Align the first column to the left */
+}
+
+.stats-table th, .stats-table td {
+  border: 1px solid #ddd; /* Border between rows and columns */
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .stats-table td, .stats-table th {
+    font-size: 14px; /* Smaller font size on smaller screens */
+    padding: 10px; /* Reduce padding */
+  }
+}
+/* Center Align Player Details */
+.enquire_section {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: center; /* Vertically center */
+  align-items: center; /* Horizontally center */
+  text-align: center; /* Center-align text */
+  min-height: calc(100vh - 100px); /* Take full height minus navbar */
+  padding: 20px; /* Add padding for spacing */
+  background-color: rgba(255, 255, 255, 0.8); /* Subtle background with transparency */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+}
+
+/* Styling for Player Name */
+.enquire_section h1 {
+  font-size: 36px; /* Larger font size for player name */
+  font-weight: bold;
+  color: #004aad; /* Match navbar color */
+  margin-bottom: 20px;
+}
+
+/* Styling for Country and General Info */
+.enquire_section p,
+.enquire_section ul {
+  font-size: 18px; /* Adjust font size */
+  color: #333; /* Darker text */
+  margin-bottom: 15px;
+}
+
+/* Styling for List Items */
+.enquire_section ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+}
+
+.enquire_section ul li {
+  margin-bottom: 10px;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+  .enquire_section h1 {
+    font-size: 28px; /* Smaller font for player name */
+  }
+
+  .enquire_section p,
+  .enquire_section ul {
+    font-size: 16px; /* Adjust font size */
+  }
+}
+
+footer {
+  margin-left:-198px;
+  
+  text-align: center;
+  background-color: #004aad;
+  padding: 20px 0; /* Space inside footer */
+  width: 100vw; /* Full width */
+  
+  bottom: 0;
+ 
+  color: white;
+}
+    </style>
+  </div>
+</body>
+<footer>
+  <p>&copy; 2024 Sports Stats Analysis. All rights reserved.</p>
+</footer>
+</html>

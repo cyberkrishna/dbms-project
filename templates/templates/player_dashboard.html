@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ player_data.player_name }} Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="static/logo.png" alt="Logo">
+      </div>
+      <div class="navbar-title">
+        Cricket Stats Dashboard
+      </div>
+      <ul class="navbar-nav">
+        <a class="navbar-link" href="/">Home</a>
+        <a class="navbar-link" href="/search_player">Player Search</a>
+        <a class="navbar-link" href="/compare_players">Player Comparison</a>
+        <a class="navbar-link" href="/search_similar_players">Similar Players</a>
+        <a class="navbar-link" href="/leaderboard">Leaderboard</a>
+      </ul>
+    </nav>
+
+    <!-- Player Profile Section -->
+    <div class="profile-section">
+      <h1>{{ player_data.player_name }}</h1>
+      <div class="profile-header">
+        <img src="static/players/{{ player_data.player_name | lower | replace(' ', '_') }}.jpg" alt="{{ player_data.player_name }}" class="player-image">
+        <div class="profile-info">
+          <p><strong>Country:</strong> <img src="/static/flags/{{ player_data.country | lower }}.png" alt="{{ player_data.country }}" width="30"> {{ player_data.country }}</p>
+          <p><strong>Role:</strong> {{ player_data.role }}</p>
+          <p><strong>Batting Style:</strong> {{ player_data.batting_style }}</p>
+          <p><strong>Bowling Style:</strong> {{ player_data.bowling_style }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player Career Stats -->
+    <div class="stats-section">
+      <h2>Career Summary</h2>
+      <table class="stats-table">
+        <tr>
+          <th>Format</th>
+          <th>Matches</th>
+          <th>Innings</th>
+          <th>Runs</th>
+          <th>High Score</th>
+          <th>Average</th>
+          <th>Strike Rate</th>
+          <th>Hundreds</th>
+          <th>Fifties</th>
+        </tr>
+        {% for format in ['ODI', 'T20', 'Test'] %}
+        <tr>
+          <td>{{ format }}</td>
+          <td>{{ player_data[format.lower() + '_batting_matches'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_innings'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_runs'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_high_score'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_average'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_strike_rate'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_hundreds'] }}</td>
+          <td>{{ player_data[format.lower() + '_batting_fifties'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      {% if player_data.role in ["all-rounder", "bowler"] %}
+      <h2>Bowling Career Summary</h2>
+      <table class="stats-table">
+        <tr>
+          <th>Format</th>
+          <th>Matches</th>
+          <th>Innings</th>
+          <th>Wickets</th>
+          <th>Best Bowling</th>
+          <th>Average</th>
+          <th>Economy</th>
+          <th>Strike Rate</th>
+          <th>5-Wicket Hauls</th>
+        </tr>
+        {% for format in ['ODI', 'T20', 'Test'] %}
+        <tr>
+          <td>{{ format }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_matches'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_innings'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_total_wickets'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_best_innings'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_average'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_economy'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_strike_rate'] }}</td>
+          <td>{{ player_data[format.lower() + '_bowling_five_wicket_hauls'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+
+    <!-- Styling -->
+    <style>
+      * {
+        left: 0px;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body, html {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        padding-top: 100px;
+      }
+
+      .navbar {
+        top: 0;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        background-color: #d00846;
+        height: 60px;
+        z-index: 100;
+      }
+
+      .navbar-logo img {
+        width: 40px;
+        margin: 10px;
+      }
+
+      .navbar-title {
+        color: white;
+        font-size: 20px;
+        margin-left: 10px;
+      }
+
+      .navbar-nav {
+        margin-left: auto;
+        display: flex;
+      }
+
+      .navbar-link {
+        text-decoration: none;
+        color: white;
+        margin: 0 10px;
+        padding: 5px 10px;
+      }
+
+      .navbar-link:hover {
+        background-color: #b0063a;
+        border-radius: 5px;
+      }
+
+      .profile-section {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .player-image {
+        width: 150px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+      }
+
+      .stats-section {
+        margin: 20px;
+      }
+
+      .stats-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+      }
+
+      .stats-table th, .stats-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .stats-table th {
+        background-color: #f4f4f4;
+      }
+
+      h1, h2 {
+        color: #333;
+        margin-top: 20px;
+      }
+    </style>
+  </div>
+</body>
+</html>

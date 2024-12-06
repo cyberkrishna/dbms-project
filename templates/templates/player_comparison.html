@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Comparison</title>
+  <style>
+    /* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  height: 100%;
+  margin: 0;
+}
+
+.navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      background-color: #004aad; /* Primary color */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 10;
+      padding: 0 20px; /* Space around navbar content */
+      border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+    }
+    
+    .navbar-logo img {
+      width: 60px; /* Adjust size for better proportion */
+      height: auto;
+      margin-left:-290px;
+    }
+    
+    .navbar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      
+      text-transform: uppercase;
+      margin-left: -500px; /* Adds spacing between logo and title */
+    }
+    
+    .navbar-nav {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 15px; /* Adds spacing between navbar links */
+      margin: 0;
+      padding: 0;
+    }
+    
+    .navbar-link {
+      position: relative;
+      text-decoration: none; /* Remove underline for links */
+      color: white;
+      padding: 10px 20px; /* Larger padding for button-like appearance */
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      border: 2px solid transparent; /* Adds subtle border for hover effect */
+      border-radius: 5px; /* Rounded corners */
+      overflow: hidden; /* Ensures hover effects stay inside the button */
+      transition: all 0.4s ease; /* Smooth transition for hover effects */
+    }
+    
+    .navbar-link:hover {
+      background-color: #ffffff; /* Background changes to white on hover */
+      color: #004aad; /* Text color changes to match the navbar background */
+      border-color: #ffffff; /* Border becomes visible */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+      text-decoration: none; /* Ensures no underline on hover */
+    }
+    
+    /* Pseudo-Elements for Animated Border */
+    .navbar-link::before,
+    .navbar-link::after {
+      content: '';
+      position: absolute;
+      background: white;
+      height: 2px;
+      width: 0;
+      transition: all 1s ease;
+    }
+    
+    .navbar-link::before {
+      top: 0; /* Top border effect */
+      left: 0;
+    }
+    
+    .navbar-link::after {
+      bottom: 0; /* Bottom border effect */
+      right: 0;
+    }
+    
+    .navbar-link:hover::before,
+    .navbar-link:hover::after {
+      width: 100%; /* Expands the border effect on hover */
+    }
+  /* Dropdown Menu Styling */
+  .dropdown-menu {
+      position: absolute;
+      top: 100%; /* Dropdown below the toggle */
+      left: 0;
+      background-color: #004aad; /* Matches the navbar's primary color */
+      border: none;
+      border-radius: 5px;
+      padding: 10px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none; /* Initially hidden */
+      z-index: 1000;
+    }
+    
+    .dropdown:hover .dropdown-menu {
+      display: block; /* Show the dropdown on hover */
+    }
+    
+    .dropdown-menu li a {
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+    
+    .dropdown-menu li a:hover {
+      background-color: #00308f;
+      color: white;
+    }
+/* Header and Section Titles */
+h1, h3, h4 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Stats Table Styling */
+.stats-table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+}
+
+.stats-table th, .stats-table td {
+  text-align: center;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.stats-table th {
+  background-color: #004aad;
+  color: white;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.stats-table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.stats-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Button Styling */
+.toggle-button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffffff;
+  background-color: #004aad; /* Primary button color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.toggle-button.active {
+  background-color: #00308f; /* Darker shade for active state */
+}
+
+.toggle-button:hover {
+  background-color: #0066cc; /* Lighter shade on hover */
+  transform: scale(1.05); /* Slight enlargement on hover */
+}
+
+/* Chart Container */
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Styling */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #004aad;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 14px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-title {
+    font-size: 18px;
+  }
+
+  .navbar-link {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .stats-table th, .stats-table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  footer {
+    font-size: 12px;
+  }
+
+  .toggle-button {
+    font-size: 12px;
+    padding: 8px 15px;
+  }
+
+  .chart-container {
+    padding: 15px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+    </div>
+    <div class="navbar-title">Crickstats</div>
+    <ul class="navbar-nav">
+      <li><a class="navbar-link" href="/">Home</a></li>
+      <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+      <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+      <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+      <li class="dropdown">
+        <a href="#" class="navbar-link dropdown-toggle">Profile</a>
+        <ul class="dropdown-menu">
+          <li><a href="/edit_preferences">Edit Preferences</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div class="container">
+    <h1>{{ player1_data.player_name }} vs {{ player2_data.player_name }}</h1>
+    <div class="toggle-section">
+      <button id="battingStatsBtn" class="toggle-button active">Batting Stats</button>
+      <button id="bowlingStatsBtn" class="toggle-button">Bowling Stats</button>
+    </div>
+    <h3>General Information</h3>
+      <table class="stats-table">
+        <tr>
+          <th>Attribute</th>
+          <th>{{ player1_data.player_name }}</th>
+          <th>{{ player2_data.player_name }}</th>
+        </tr>
+        <tr><td>Country</td><td>{{ player1_data.country }}</td><td>{{ player2_data.country }}</td></tr>
+        <tr><td>Role</td><td>{{ player1_data.role }}</td><td>{{ player2_data.role }}</td></tr>
+        <tr><td>Batting Style</td><td>{{ player1_data.batting_style }}</td><td>{{ player2_data.batting_style }}</td></tr>
+        <tr><td>Bowling Style</td><td>{{ player1_data.bowling_style }}</td><td>{{ player2_data.bowling_style }}</td></tr>
+      </table>
+
+    <!-- ODI Stats -->
+  <div id="battingStatsSection">
+      <h3>Batting Stats</h3>
+    <h3>ODI Stats</h3>
+    <table class="stats-table">
+      <tr>
+        <th>Attribute</th>
+        <th>{{ player1_data.player_name }}</th>
+        <th>{{ player2_data.player_name }}</th>
+      </tr>
+      <tr><td>Matches</td><td>{{ player1_data.odi_batting_matches }}</td><td>{{ player2_data.odi_batting_matches }}</td></tr>
+      <tr><td>Innings</td><td>{{ player1_data.odi_batting_innings }}</td><td>{{ player2_data.odi_batting_innings }}</td></tr>
+      <tr><td>Runs</td><td>{{ player1_data.odi_batting_runs }}</td><td>{{ player2_data.odi_batting_runs }}</td></tr>
+      <tr><td>Hundreds</td><td>{{ player1_data.odi_batting_hundreds }}</td><td>{{ player2_data.odi_batting_hundreds }}</td></tr>
+      <tr><td>Fifties</td><td>{{ player1_data.odi_batting_fifties }}</td><td>{{ player2_data.odi_batting_fifties }}</td></tr>
+    </table>
+    
+
+    <!-- T20 Stats -->
+    <h3>T20 Stats</h3>
+    <table class="stats-table">
+      <tr>
+        <th>Attribute</th>
+        <th>{{ player1_data.player_name }}</th>
+        <th>{{ player2_data.player_name }}</th>
+      </tr>
+      <tr><td>Matches</td><td>{{ player1_data.t20_batting_matches }}</td><td>{{ player2_data.t20_batting_matches }}</td></tr>
+      <tr><td>Innings</td><td>{{ player1_data.t20_batting_innings }}</td><td>{{ player2_data.t20_batting_innings }}</td></tr>
+      <tr><td>Runs</td><td>{{ player1_data.t20_batting_runs }}</td><td>{{ player2_data.t20_batting_runs }}</td></tr>
+      <tr><td>Strike Rate</td><td>{{ player1_data.t20_batting_strike_rate }}</td><td>{{ player2_data.t20_batting_strike_rate }}</td></tr>
+    </table>
+    
+
+    <!-- Test Stats -->
+    <h3>Test Stats</h3>
+    <table class="stats-table">
+      <tr>
+        <th>Attribute</th>
+        <th>{{ player1_data.player_name }}</th>
+        <th>{{ player2_data.player_name }}</th>
+      </tr>
+      <tr><td>Matches</td><td>{{ player1_data.test_batting_matches }}</td><td>{{ player2_data.test_batting_matches }}</td></tr>
+      <tr><td>Innings</td><td>{{ player1_data.test_batting_innings }}</td><td>{{ player2_data.test_batting_innings }}</td></tr>
+      <tr><td>Runs</td><td>{{ player1_data.test_batting_runs }}</td><td>{{ player2_data.test_batting_runs }}</td></tr>
+      <tr><td>Average</td><td>{{ player1_data.test_batting_average }}</td><td>{{ player2_data.test_batting_average }}</td></tr>
+    </table>
+    <div class="chart-container">
+      <h3>Runs Comparison</h3>
+      <canvas id="runsChart"></canvas>
+    </div>
+
+    <!-- Matches, Innings, High Score Comparison Chart -->
+    <div class="chart-container">
+      <h3>Matches, Innings, High Score Comparison</h3>
+      <canvas id="matchesInningsHighscoreChart"></canvas>
+    </div>
+
+    <!-- Hundreds and Fifties Comparison Chart -->
+    <div class="chart-container">
+      <h3>Hundreds and Fifties Comparison</h3>
+      <canvas id="hundredsFiftiesChart"></canvas>
+    </div>
+</div>
+<div id="bowlingStatsSection" style="display: none;">
+  <h3>Bowling Stats</h3>
+
+  <!-- ODI Bowling Stats Table -->
+  <h4>ODI Bowling Stats</h4>
+  <table class="stats-table">
+    <tr>
+      <th>Attribute</th>
+      <th>{{ player1_data.player_name }}</th>
+      <th>{{ player2_data.player_name }}</th>
+    </tr>
+    <tr><td>Matches</td><td>{{ player1_data.odi_bowling_matches }}</td><td>{{ player2_data.odi_bowling_matches }}</td></tr>
+    <tr><td>Economy</td><td>{{ player1_data.odi_bowling_economy }}</td><td>{{ player2_data.odi_bowling_economy }}</td></tr>
+    <tr><td>Total Wickets</td><td>{{ player1_data.odi_bowling_total_wickets }}</td><td>{{ player2_data.odi_bowling_total_wickets }}</td></tr>
+    <tr><td>Maidens</td><td>{{ player1_data.odi_bowling_maidens }}</td><td>{{ player2_data.odi_bowling_maidens }}</td></tr>
+    <tr><td>4-Wicket Hauls</td><td>{{ player1_data.odi_bowling_four_wicket_hauls }}</td><td>{{ player2_data.odi_bowling_four_wicket_hauls }}</td></tr>
+    <tr><td>5-Wicket Hauls</td><td>{{ player1_data.odi_bowling_five_wicket_hauls }}</td><td>{{ player2_data.odi_bowling_five_wicket_hauls }}</td></tr>
+  </table>
+
+  <!-- T20 Bowling Stats Table -->
+  <h4>T20 Bowling Stats</h4>
+  <table class="stats-table">
+    <tr>
+      <th>Attribute</th>
+      <th>{{ player1_data.player_name }}</th>
+      <th>{{ player2_data.player_name }}</th>
+    </tr>
+    <tr><td>Matches</td><td>{{ player1_data.t20_bowling_matches }}</td><td>{{ player2_data.t20_bowling_matches }}</td></tr>
+    <tr><td>Economy</td><td>{{ player1_data.t20_bowling_economy }}</td><td>{{ player2_data.t20_bowling_economy }}</td></tr>
+    <tr><td>Total Wickets</td><td>{{ player1_data.t20_bowling_total_wickets }}</td><td>{{ player2_data.t20_bowling_total_wickets }}</td></tr>
+    <tr><td>Maidens</td><td>{{ player1_data.t20_bowling_maidens }}</td><td>{{ player2_data.t20_bowling_maidens }}</td></tr>
+    <tr><td>4-Wicket Hauls</td><td>{{ player1_data.t20_bowling_four_wicket_hauls }}</td><td>{{ player2_data.t20_bowling_four_wicket_hauls }}</td></tr>
+    <tr><td>5-Wicket Hauls</td><td>{{ player1_data.t20_bowling_five_wicket_hauls }}</td><td>{{ player2_data.t20_bowling_five_wicket_hauls }}</td></tr>
+  </table>
+
+  <!-- Test Bowling Stats Table -->
+  <h4>Test Bowling Stats</h4>
+  <table class="stats-table">
+    <tr>
+      <th>Attribute</th>
+      <th>{{ player1_data.player_name }}</th>
+      <th>{{ player2_data.player_name }}</th>
+    </tr>
+    <tr><td>Matches</td><td>{{ player1_data.test_bowling_matches }}</td><td>{{ player2_data.test_bowling_matches }}</td></tr>
+    <tr><td>Economy</td><td>{{ player1_data.test_bowling_economy }}</td><td>{{ player2_data.test_bowling_economy }}</td></tr>
+    <tr><td>Total Wickets</td><td>{{ player1_data.test_bowling_total_wickets }}</td><td>{{ player2_data.test_bowling_total_wickets }}</td></tr>
+    <tr><td>Maidens</td><td>{{ player1_data.test_bowling_maidens }}</td><td>{{ player2_data.test_bowling_maidens }}</td></tr>
+    <tr><td>4-Wicket Hauls</td><td>{{ player1_data.test_bowling_four_wicket_hauls }}</td><td>{{ player2_data.test_bowling_four_wicket_hauls }}</td></tr>
+    <tr><td>5-Wicket Hauls</td><td>{{ player1_data.test_bowling_five_wicket_hauls }}</td><td>{{ player2_data.test_bowling_five_wicket_hauls }}</td></tr>
+  </table>
+
+  <!-- Bowling Charts -->
+  <div class="chart-container">
+    <h3>Matches vs Wickets Comparison</h3>
+    <canvas id="matchesWicketsChart"></canvas>
+  </div>
+  <div class="chart-container">
+    <h3>Bowling Economy Comparison</h3>
+    <canvas id="economyChart"></canvas>
+  </div>
+  <div class="chart-container">
+    <h3>Hauls and Maidens Comparison</h3>
+    <canvas id="haulsMaidensChart"></canvas>
+  </div>
+</div>
+<script>
+
+  const battingStatsBtn = document.getElementById('battingStatsBtn');
+    const bowlingStatsBtn = document.getElementById('bowlingStatsBtn');
+    const battingStatsSection = document.getElementById('battingStatsSection');
+    const bowlingStatsSection = document.getElementById('bowlingStatsSection');
+
+    battingStatsBtn.addEventListener('click', () => {
+      battingStatsBtn.classList.add('active');
+      bowlingStatsBtn.classList.remove('active');
+      battingStatsSection.style.display = 'block';
+      bowlingStatsSection.style.display = 'none';
+    });
+
+    bowlingStatsBtn.addEventListener('click', () => {
+      bowlingStatsBtn.classList.add('active');
+      battingStatsBtn.classList.remove('active');
+      battingStatsSection.style.display = 'none';
+      bowlingStatsSection.style.display = 'block';
+    });
+  // Runs Chart
+  const runsCtx = document.getElementById('runsChart').getContext('2d');
+  new Chart(runsCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ runs_data.labels | safe }},
+      datasets: [
+        {
+          label: '{{ player1_data.player_name }}',
+          data: {{ runs_data.player1 | safe }},
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }}',
+          data: {{ runs_data.player2 | safe }},
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        }
+      ]
+    }
+  });
+
+  // Matches, Innings, High Score Chart
+  const matchesCtx = document.getElementById('matchesInningsHighscoreChart').getContext('2d');
+  new Chart(matchesCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ matches_innings_highscore_data.labels | safe }},
+      datasets: [
+        {
+          label: '{{ player1_data.player_name }} Matches',
+          data: {{ matches_innings_highscore_data.matches.player1 | safe }},
+          backgroundColor: 'rgba(255, 159, 64, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }} Matches',
+          data: {{ matches_innings_highscore_data.matches.player2 | safe }},
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        },
+        {
+          label: '{{ player1_data.player_name }} Innings',
+          data: {{ matches_innings_highscore_data.innings.player1 | safe }},
+          backgroundColor: 'rgba(153, 102, 255, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }} Innings',
+          data: {{ matches_innings_highscore_data.innings.player2 | safe }},
+          backgroundColor: 'rgba(255, 206, 86, 0.5)',
+        },
+        {
+          label: '{{ player1_data.player_name }} High Score',
+          data: {{ matches_innings_highscore_data.high_score.player1 | safe }},
+          backgroundColor: 'rgba(201, 203, 207, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }} High Score',
+          data: {{ matches_innings_highscore_data.high_score.player2 | safe }},
+          backgroundColor: 'rgba(66, 135, 245, 0.5)',
+        }
+      ]
+    }
+  });
+
+  // Hundreds and Fifties Chart
+  const hundredsCtx = document.getElementById('hundredsFiftiesChart').getContext('2d');
+  new Chart(hundredsCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ hundreds_fifties_data.labels | safe }},
+      datasets: [
+        {
+          label: '{{ player1_data.player_name }} Hundreds',
+          data: {{ hundreds_fifties_data.hundreds.player1 | safe }},
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }} Hundreds',
+          data: {{ hundreds_fifties_data.hundreds.player2 | safe }},
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        },
+        {
+          label: '{{ player1_data.player_name }} Fifties',
+          data: {{ hundreds_fifties_data.fifties.player1 | safe }},
+          backgroundColor: 'rgba(255, 159, 64, 0.5)',
+        },
+        {
+          label: '{{ player2_data.player_name }} Fifties',
+          data: {{ hundreds_fifties_data.fifties.player2 | safe }},
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        }
+      ]
+    }
+  });
+
+  const matchesWicketsCtx = document.getElementById('matchesWicketsChart').getContext('2d');
+  new Chart(matchesWicketsCtx, {
+    type: 'bar',
+    data: {
+      labels: ['ODI', 'T20', 'Test'],
+      datasets: [
+        {
+          label: '{{ player1_data.player_name }} Matches',
+          data: [{{ player1_data.odi_bowling_matches }}, {{ player1_data.t20_bowling_matches }}, {{ player1_data.test_bowling_matches }}],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        },
+        {
+          label: '{{ player2_data.player_name }} Matches',
+          data: [{{ player2_data.odi_bowling_matches }}, {{ player2_data.t20_bowling_matches }}, {{ player2_data.test_bowling_matches }}],
+          backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        },
+        {
+          label: '{{ player1_data.player_name }} Wickets',
+          data: [{{ player1_data.odi_bowling_total_wickets }}, {{ player1_data.t20_bowling_total_wickets }}, {{ player1_data.test_bowling_total_wickets }}],
+          backgroundColor: 'rgba(75, 192, 192, 0.5)'
+        },
+        {
+          label: '{{ player2_data.player_name }} Wickets',
+          data: [{{ player2_data.odi_bowling_total_wickets }}, {{ player2_data.t20_bowling_total_wickets }}, {{ player2_data.test_bowling_total_wickets }}],
+          backgroundColor: 'rgba(153, 102, 255, 0.5)'
+        }
+      ]
+    }
+  });
+
+  // Economy Comparison Chart
+  const economyCtx = document.getElementById('economyChart').getContext('2d');
+  new Chart(economyCtx, {
+    type: 'bar',
+    data: {
+      labels: ['ODI', 'T20', 'Test'],
+      datasets: [
+        {
+          label: '{{ player1_data.player_name }} Economy',
+          data: [{{ player1_data.odi_bowling_economy }}, {{ player1_data.t20_bowling_economy }}, {{ player1_data.test_bowling_economy }}],
+          backgroundColor: 'rgba(255, 159, 64, 0.5)'
+        },
+        {
+          label: '{{ player2_data.player_name }} Economy',
+          data: [{{ player2_data.odi_bowling_economy }}, {{ player2_data.t20_bowling_economy }}, {{ player2_data.test_bowling_economy }}],
+          backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        }
+      ]
+    }
+  });
+
+  const haulsMaidensCtx = document.getElementById('haulsMaidensChart').getContext('2d');
+new Chart(haulsMaidensCtx, {
+  type: 'bar',
+  data: {
+    labels: ['ODI', 'T20', 'Test'],
+    datasets: [
+      {
+        label: '{{ player1_data.player_name }} 4-Wicket Hauls',
+        data: [{{ player1_data.odi_bowling_four_wicket_hauls }}, {{ player1_data.t20_bowling_four_wicket_hauls }}, {{ player1_data.test_bowling_four_wicket_hauls }}],
+        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+      },
+      {
+        label: '{{ player2_data.player_name }} 4-Wicket Hauls',
+        data: [{{ player2_data.odi_bowling_four_wicket_hauls }}, {{ player2_data.t20_bowling_four_wicket_hauls }}, {{ player2_data.test_bowling_four_wicket_hauls }}],
+        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+      },
+      {
+        label: '{{ player1_data.player_name }} 5-Wicket Hauls',
+        data: [{{ player1_data.odi_bowling_five_wicket_hauls }}, {{ player1_data.t20_bowling_five_wicket_hauls }}, {{ player1_data.test_bowling_five_wicket_hauls }}],
+        backgroundColor: 'rgba(75, 192, 192, 0.5)'
+      },
+      {
+        label: '{{ player2_data.player_name }} 5-Wicket Hauls',
+        data: [{{ player2_data.odi_bowling_five_wicket_hauls }}, {{ player2_data.t20_bowling_five_wicket_hauls }}, {{ player2_data.test_bowling_five_wicket_hauls }}],
+        backgroundColor: 'rgba(153, 102, 255, 0.5)'
+      },
+      {
+        label: '{{ player1_data.player_name }} Maidens',
+        data: [{{ player1_data.odi_bowling_maidens }}, {{ player1_data.t20_bowling_maidens }}, {{ player1_data.test_bowling_maidens }}],
+        backgroundColor: 'rgba(255, 206, 86, 0.5)'
+      },
+      {
+        label: '{{ player2_data.player_name }} Maidens',
+        data: [{{ player2_data.odi_bowling_maidens }}, {{ player2_data.t20_bowling_maidens }}, {{ player2_data.test_bowling_maidens }}],
+        backgroundColor: 'rgba(201, 203, 207, 0.5)'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Comparison of 4-Wicket Hauls, 5-Wicket Hauls, and Maidens'
+      }
+    }
+  }
+});
+
+  
+
+</script>
+
+</body>
+</html>

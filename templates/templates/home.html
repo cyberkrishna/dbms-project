@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Stats Analysis</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+      </div>
+      <div class="navbar-title">Crickstats</div>
+      <ul class="navbar-nav">
+        <li><a class="navbar-link" href="/">Home</a></li>
+        <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+        <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+        <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+        <!-- Profile Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Profile <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/edit_preferences">Edit Preferences</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+    </nav>
+    
+
+    <div class="welcome-section">
+      <h1 class="welcome-title">{{username}},WELCOME TO CRICKET STATS</h1>
+    </div>
+    
+    <!-- Quick Links Section with Curved White Background -->
+    <div class="quick-links-container">
+      <div class="quick-links">
+        <h3 class="section-title">Trending Topics</h3>
+        <div class="quick-links-row">
+          <div class="quick-link"><a href='https://www.bcci.tv/'>
+            <img src="https://th.bing.com/th/id/R.d2e6f0bc55838c3922274a023acce4e6?rik=2SflJ89sDY7zrQ&riu=http%3a%2f%2flogos-download.com%2fwp-content%2fuploads%2f2016%2f10%2fBCCI_logo.png&ehk=yOQjCXtXVvpETzdkcgmwBs3sJAnE4CEbweX203l9vsI%3d&risl=&pid=ImgRaw&r=0" alt="Search Players">
+            <h4>BCCI</h4>
+            <p>Board of Control for Cricket in India.</p></a>
+          </div>
+          <div class="quick-link"><a href='https://www.icc-cricket.com/'>
+            <img src="https://cdn.freelogovectors.net/wp-content/uploads/2018/03/ICC_International-Cricket-Council_logo.png" alt="Compare Players">
+            <h4>ICC</h4>
+            <p>International Cricket Council</p></a>
+          </div>
+          <div class="quick-link"><a href='https://www.iplt20.com/auction'>
+            <img src="https://www.nsbpictures.com/wp-content/uploads/2019/03/ipl-logo-1024x733.png" alt="Similar Players">
+            <h4>IPL 2025</h4>
+            <p>Discover the latest auction news.</p></a>
+          </div>
+          <div class="quick-link"><a href="https://www.espncricinfo.com/series/ranji-trophy-2024-25-1445824">
+            <img src="https://th.bing.com/th/id/R.14b79be462535afdd7ffb3a20aca2470?rik=sA1DJx7TEJyh3Q&riu=http%3a%2f%2fupload.wikimedia.org%2fwikipedia%2fen%2fthumb%2f2%2f23%2fRanji_Trophy_logo.png%2f200px-Ranji_Trophy_logo.png&ehk=Us2n8MZXQIK2j1Dnw7ZEGNwEEkBd%2f6psQCK0XroVNOA%3d&risl=&pid=ImgRaw&r=0" alt="Profile">
+            <h4>Ranji Trophy</h4>
+            <p>Manage your preferences and saved data.</p></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>&copy; 2024 Cricket Stats Analysis. All rights reserved.</p>
+    </footer>
+    
+
+  <style>
+    /* General Styling */
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      left:0px
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://wallpaperaccess.com/full/2604895.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      backdrop-filter: blur(2px);
+      overflow-x: hidden;
+    }
+    body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Black overlay with 50% transparency */
+  z-index: -1;
+}
+
+/* Navbar Styling */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #004aad; /* Primary color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  z-index: 10;
+  padding: 0 20px; /* Space around navbar content */
+  border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+}
+
+.navbar-logo img {
+  width: 60px; /* Adjust size for better proportion */
+  height: auto;
+  margin-left:-290px;
+}
+
+.navbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  
+  text-transform: uppercase;
+  margin-left: -500px; /* Adds spacing between logo and title */
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 15px; /* Adds spacing between navbar links */
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  position: relative;
+  text-decoration: none; /* Remove underline for links */
+  color: white;
+  padding: 10px 20px; /* Larger padding for button-like appearance */
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 2px solid transparent; /* Adds subtle border for hover effect */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensures hover effects stay inside the button */
+  transition: all 0.4s ease; /* Smooth transition for hover effects */
+}
+
+.navbar-link:hover {
+  background-color: #ffffff; /* Background changes to white on hover */
+  color: #004aad; /* Text color changes to match the navbar background */
+  border-color: #ffffff; /* Border becomes visible */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
+/* Pseudo-Elements for Animated Border */
+.navbar-link::before,
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  background: white;
+  height: 2px;
+  width: 0;
+  transition: all 1s ease;
+}
+
+.navbar-link::before {
+  top: 0; /* Top border effect */
+  left: 0;
+}
+
+.navbar-link::after {
+  bottom: 0; /* Bottom border effect */
+  right: 0;
+}
+
+.navbar-link:hover::before,
+.navbar-link:hover::after {
+  width: 100%; /* Expands the border effect on hover */
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Dropdown below the toggle */
+  left: 0;
+  background-color: #004aad; /* Matches the navbar's primary color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Initially hidden */
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block; /* Show the dropdown on hover */
+}
+
+.dropdown-menu li a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #00308f;
+  color: white;
+}
+
+
+    /* Welcome Section */
+/* Welcome Section */
+.welcome-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  text-align: center;
+  color: white;
+  background: url('https://wallpaperaccess.com/full/2604895.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+}
+
+.welcome-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Dark overlay for shade */
+  
+}
+
+.welcome-title {
+  font-size: 60px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffffff;
+  z-index:1;
+  animation: fadeIn 3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quick Links Container with Curved White Background */
+/* Quick Links Container with Full Width */
+.quick-links-container {
+  background-color: white; /* White background */
+  padding: 50px 20px;
+  margin-left:-198px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  margin-top: -20px; /* Slight overlap */
+  width: 100vw; /* Full width */
+  position: relative;
+  left: 0;
+}
+
+/* Quick Links */
+.quick-links {
+  max-width: 1200px; /* Center content within container */
+  margin: 0 auto;
+  text-decoration:none; /* Center align the content */
+}
+
+.quick-links-row {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+.quick-link a{
+  text-decoration:none;
+}
+.quick-link {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 200px;
+}
+
+.quick-link img {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+.quick-link h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #004aad;
+  margin: 10px 0;
+}
+
+.quick-link p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.quick-link:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer with Full Width */
+footer {
+  margin-left:-198px;
+  
+  text-align: center;
+  background-color: #004aad;
+  padding: 20px 0; /* Space inside footer */
+  width: 100vw; /* Full width */
+  
+  bottom: 0;
+ 
+  color: white;
+}
+
+
+  </style>
+</body>
+</html> 

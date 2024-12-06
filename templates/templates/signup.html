@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://wallpaperaccess.com/full/2604895.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      backdrop-filter: blur(5px); /* Blur effect */
+      z-index: -1;
+    }
+
+    .signup-modal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .signup-modal-content {
+      background: rgba(0, 0, 0, 0.8); /* Dominant black background with transparency */
+      padding: 30px;
+      border-radius: 10px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); /* More pronounced shadow */
+      border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border effect */
+    }
+
+    .signup-title {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff; /* White text for contrast */
+    }
+
+    .signup-input {
+      width: 100%;
+      padding: 10px 15px; /* Adjusted padding: 10px for top/bottom, 15px for left/right */
+      margin: 10px 0;
+      border: 1px solid rgba(255, 255, 255, 0.4); /* Subtle input border */
+      border-radius: 5px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.2); /* Transparent input background */
+      color: #fff; /* White text */
+      box-sizing: border-box; /* Ensure padding does not affect width */
+    }
+
+    .signup-input::placeholder {
+      color: rgba(255, 255, 255, 0.7); /* Subtle placeholder text */
+    }
+
+    .submit-btn {
+      background: #ff4d4f;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: #d9363e;
+    }
+
+    .signin-link {
+      font-size: 14px;
+      color: #ff4d4f;
+      text-decoration: none;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .signin-link:hover {
+      text-decoration: underline;
+    }
+    .alert-box {
+      background-color: #f8d7da;
+      color: #842029;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #f5c2c7;
+      border-radius: 5px;
+      text-align: center;
+  }
+
+  .alert-message {
+      margin: 0;
+      font-size: 14px;
+  }
+  </style>
+</head>
+<body>
+  <div class="signup-modal">
+    <div class="signup-modal-content">
+      <h2 class="signup-title">Sign Up</h2>
+      <!-- Error message container -->
+      <div id="error-message" class="error-message" style="display: none; color: red; margin-bottom: 10px;"></div>
+      {% if is_error %}
+            <div class="alert-box">
+                <p class="alert-message">{{ message }}</p>
+            </div>
+      {% endif %}
+      <form id="signupForm" action="{{ url_for('signup') }}" method="POST">
+        <input required name="username" placeholder="Username" type="text" class="signup-input">
+        <input required id="email" name="email" placeholder="Email" type="email" class="signup-input">
+        <input required id="password" name="password" placeholder="Password" type="password" class="signup-input">
+        <input required id="confirm_password" name="confirm_password" placeholder="Confirm Password" type="password" class="signup-input">
+        <button type="submit" class="submit-btn">Submit</button>
+      </form>
+      <a href="{{ url_for('login') }}" class="signin-link">Already have an account? Sign In</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      const errorMessageDiv = document.getElementById('error-message');
+
+      // Email validation regex
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(email)) {
+        event.preventDefault();
+        errorMessageDiv.style.display = 'block';
+        errorMessageDiv.textContent = 'Invalid email format. Please enter a valid email.';
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        event.preventDefault();
+        errorMessageDiv.style.display = 'block';
+        errorMessageDiv.textContent = 'Passwords do not match. Please try again.';
+        return;
+      }
+
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      event.preventDefault();
+      errorMessageDiv.style.display = 'block';
+      errorMessageDiv.textContent = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
+      return;
+    }
+
+      // Clear error message if all validations pass
+      errorMessageDiv.style.display = 'none';
+    });
+    
+
+  </script>
+</body>

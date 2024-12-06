@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+      </div>
+      <div class="navbar-title">Crickstats</div>
+      <ul class="navbar-nav">
+        <li><a class="navbar-link" href="/">Home</a></li>
+        <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+        <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+        <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+        <!-- Profile Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Profile <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/edit_preferences">Edit Preferences</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <div id="content" class="content">
+      <h2 class="text-center">Welcome, {{ user_details.username }}</h2>
+
+      <!-- User Details Section -->
+      <div class="user-details">
+        <h3>Your Details</h3>
+        <table class="table table-striped">
+          <tr><th>Username:</th><td>{{ user_details.username }}</td></tr>
+          <tr><th>Email:</th><td>{{ user_details.email }}</td></tr>
+          <tr><th>Favorite Players:</th><td>{{ user_details.favorite_players | default('Not set') }}</td></tr>
+          <tr><th>Favorite Team:</th><td>{{ user_details.favorite_team | default('Not set') }}</td></tr>
+          <tr><th>Dream Team:</th><td>{{ user_details.dream_team | default('Not set') }}</td></tr>
+        </table>
+      </div>
+
+      <!-- Preferences Form -->
+      <div class="preferences-form">
+        <h3>Edit Your Preferences</h3>
+        <form action="/edit_preferences" method="POST">
+          <div class="form-group">
+            <label for="favorite_players">Favorite Players (comma-separated):</label>
+            <input type="text" id="favorite_players" name="favorite_players" class="form-control" placeholder="Enter your favorite player">
+          </div>
+          <div class="form-group">
+            <label for="favorite_team">Favorite Team:</label>
+            <input type="text" id="favorite_team" name="favorite_team" class="form-control" placeholder="enter the team name">
+          </div>
+          <div class="form-group">
+            <label for="dream_team">Dream Team (comma-separated):</label>
+            <input type="text" id="dream_team" name="dream_team" class="form-control" placeholder="enter your dream team">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Preferences</button>
+        </form>
+      </div>
+    </div>
+
+   
+  </div>
+
+  <!-- Autocomplete Script -->
+  <script>
+    $(document).ready(function() {
+      // Autocomplete for favorite players with comma-separated logic
+      $("#favorite_players").on('input', function() {
+        const input = $(this).val();
+        const lastPlayer = input.split(',').pop().trim(); // Get the last part after a comma
+  
+        $(this).autocomplete({
+          source: function(request, response) {
+            $.ajax({
+              url: "/autocomplete_players",
+              data: { q: lastPlayer }, // Pass the last incomplete part
+              success: function(data) {
+                response(data);
+              }
+            });
+          },
+          minLength: 1, // Minimum characters for triggering
+          focus: function(event, ui) {
+            // Prevent overwriting the whole field value
+            return false;
+          },
+          select: function(event, ui) {
+            const currentVal = input.split(','); // Split the input into parts
+            currentVal.pop(); // Remove the last incomplete part
+            currentVal.push(ui.item.value); // Add the selected value
+            $(this).val(currentVal.join(', ') + ', '); // Join the list back and add a comma
+            return false; // Prevent default behavior
+          }
+        });
+      });
+  
+      // Autocomplete for favorite team (single input)
+      $("#favorite_team").autocomplete({
+        source: function(request, response) {
+          $.ajax({
+            url: "/autocomplete_teams",
+            data: { q: request.term },
+            success: function(data) {
+              response(data);
+            }
+          });
+        },
+        minLength: 2 // Minimum characters for triggering
+      });
+    });
+  </script>
+  
+
+  <style>
+    /* General Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      left:0px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+    }
+
+    /* Navbar Styling */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #004aad; /* Primary color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  z-index: 10;
+  padding: 0 20px; /* Space around navbar content */
+  border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+}
+
+.navbar-logo img {
+  width: 60px; /* Adjust size for better proportion */
+  height: auto;
+  margin-left:-290px;
+}
+
+.navbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  
+  text-transform: uppercase;
+  margin-left: -500px; /* Adds spacing between logo and title */
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 15px; /* Adds spacing between navbar links */
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  position: relative;
+  text-decoration: none; /* Remove underline for links */
+  color: white;
+  padding: 10px 20px; /* Larger padding for button-like appearance */
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 2px solid transparent; /* Adds subtle border for hover effect */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensures hover effects stay inside the button */
+  transition: all 0.4s ease; /* Smooth transition for hover effects */
+}
+
+.navbar-link:hover {
+  background-color: #ffffff; /* Background changes to white on hover */
+  color: #004aad; /* Text color changes to match the navbar background */
+  border-color: #ffffff; /* Border becomes visible */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
+/* Pseudo-Elements for Animated Border */
+.navbar-link::before,
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  background: white;
+  height: 2px;
+  width: 0;
+  transition: all 1s ease;
+}
+
+.navbar-link::before {
+  top: 0; /* Top border effect */
+  left: 0;
+}
+
+.navbar-link::after {
+  bottom: 0; /* Bottom border effect */
+  right: 0;
+}
+
+.navbar-link:hover::before,
+.navbar-link:hover::after {
+  width: 100%; /* Expands the border effect on hover */
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Dropdown below the toggle */
+  left: 0;
+  background-color: #004aad; /* Matches the navbar's primary color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Initially hidden */
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block; /* Show the dropdown on hover */
+}
+
+.dropdown-menu li a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #00308f;
+  color: white;
+}
+
+    .content {
+      margin-top: 120px;
+    }
+
+    h2, h3 {
+      color: #333;
+      text-align: center;
+    }
+
+    /* Box Styling */
+    .user-details, .preferences-form {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .user-details table {
+      width: 100%;
+      margin: 10px 0;
+      border-collapse: collapse;
+    }
+
+    .user-details th, .user-details td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .user-details th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    .preferences-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .preferences-form label {
+      font-weight: bold;
+      color: #555;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+      background-color: #004aad;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #00308f;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      background-color: #004aad;
+      padding: 20px 0;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
+  
+</body>
+
+</html>

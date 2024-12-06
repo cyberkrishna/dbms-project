@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Stats Analysis</title>
+  <style>
+    .alert-box {
+      background-color: #f8d7da;
+      color: #842029;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #f5c2c7;
+      border-radius: 5px;
+      text-align: center;
+  }
+
+  .alert-message {
+      margin: 0;
+      font-size: 14px;
+  }
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      left:0px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+  background-image: url('https://wallpapercave.com/wp/wp4012091.jpg');
+  background-size: cover;
+  background-color: #f8f9fa;
+  background-position: calc(100% - 5px) center;
+   /* Move 20 pixels to the right */
+}
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Black overlay with 50% transparency */
+  z-index: -1;
+}
+
+
+    /* Navbar Styling */
+    /* Navbar Styling */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #004aad; /* Primary color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  z-index: 10;
+  padding: 0 20px; /* Space around navbar content */
+  border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+}
+
+.navbar-logo img {
+  width: 60px; /* Adjust size for better proportion */
+  height: auto;
+  margin-left:-290px;
+}
+
+.navbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  
+  text-transform: uppercase;
+  margin-left: -500px; /* Adds spacing between logo and title */
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 15px; /* Adds spacing between navbar links */
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  position: relative;
+  text-decoration: none; /* Remove underline for links */
+  color: white;
+  padding: 10px 20px; /* Larger padding for button-like appearance */
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 2px solid transparent; /* Adds subtle border for hover effect */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensures hover effects stay inside the button */
+  transition: all 0.4s ease; /* Smooth transition for hover effects */
+}
+
+.navbar-link:hover {
+  background-color: #ffffff; /* Background changes to white on hover */
+  color: #004aad; /* Text color changes to match the navbar background */
+  border-color: #ffffff; /* Border becomes visible */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
+/* Pseudo-Elements for Animated Border */
+.navbar-link::before,
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  background: white;
+  height: 2px;
+  width: 0;
+  transition: all 1s ease;
+}
+
+.navbar-link::before {
+  top: 0; /* Top border effect */
+  left: 0;
+}
+
+.navbar-link::after {
+  bottom: 0; /* Bottom border effect */
+  right: 0;
+}
+
+.navbar-link:hover::before,
+.navbar-link:hover::after {
+  width: 100%; /* Expands the border effect on hover */
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Dropdown below the toggle */
+  left: 0;
+  background-color: #004aad; /* Matches the navbar's primary color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Initially hidden */
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block; /* Show the dropdown on hover */
+}
+
+.dropdown-menu li a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #00308f;
+  color: white;
+}
+/* Search Section */
+    .search-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 90vh; /* Center vertically */
+      text-align: center;
+    }
+
+    .search-header__input {
+      font-family: inherit;
+      font-size: 20px;
+      background-color: #f8f9fa;
+      border: solid 3px #ddd;
+      color: #495057;
+      padding: 12px 20px;
+      border-radius: 30px;
+      width: 600px; /* Increased width */
+      height: 50px;
+      transition: all ease-in-out 0.5s;
+    }
+
+    .search-header__input:hover,
+    .search-header__input:focus {
+      box-shadow: 0 0 1em rgba(0, 0, 0, 0.2);
+      outline: none;
+    }
+
+    .search-header__button {
+      margin-top: 20px;
+      color: #ffffff;
+      background: transparent;
+      border: 3px solid #ffffff;
+      border-radius: 30px;
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      padding: 12px 20px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.5s ease;
+    }
+
+    .search-header__button:hover {
+      background: #ffffff;
+      color: #004aad;
+      border-color: #004aad;
+    }
+    
+
+    .search-header__button:active {
+      transform: translate(2px, 2px);
+    }
+
+    /* Footer */
+    footer {
+      position: fixed;
+      text-align: center;
+      background-color: #004aad;
+      padding: 20px 0;
+      width: 100vw;
+      bottom: 0;
+      color: white;
+     /* Suggestions List Styling */
+.suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0; /* Slight spacing from the input box */
+  background-color: #ffffff; /* White background */
+  border: 2px solid #004aad; /* Blue border to match theme */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  position: absolute; /* Position relative to the input box */
+  top: 100%; /* Place right below the input box */
+  left: 50%; /* Align to center */
+  transform: translateX(-50%); /* Adjust horizontal alignment */
+  width: 600px; /* Match input width */
+  z-index: 1000; /* Ensure it's above other elements */
+  max-height: 200px; /* Restrict height for large lists */
+  overflow-y: auto; /* Scrollable if content exceeds height */
+}
+
+.suggestions ul {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 25px;
+  color: #FFFFFF;
+  transition: background-color 0.3s ease;
+}
+
+
+.suggestions li:hover {
+  background-color: #f0f0f0; /* Light gray on hover */
+  color: #004aad; /* Blue text on hover */
+}
+
+.alert-box {
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c2c7;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.alert-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+      </div>
+      <div class="navbar-title">Crickstats</div>
+      <ul class="navbar-nav">
+        <li><a class="navbar-link" href="/">Home</a></li>
+        <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+        <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+        <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+        <!-- Profile Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Profile <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/edit_preferences">Edit Preferences</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+    </nav>
+
+    <!-- Search Section -->
+    <div class="search-header">
+      {% if is_error %}
+      <div class="alert-box">
+          <p class="alert-message">{{ message }}</p>
+      </div>
+      {% endif %}
+      <form id="search-form" method="GET" action="/search">
+        <input type="text" id="player-search" name="query" class="search-header__input" placeholder="Search for a player...">
+        <button type="submit" class="search-header__button">Search</button>
+      </form>
+      <ul class='suggestions' id="suggestions" ></ul>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 Sports Stats Analysis. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+   $(document).ready(function () {
+  // Fetch suggestions based on input
+  $('#player-search').on('keyup', function () {
+    const query = $(this).val();
+    if (query.length > 2) {
+      $.ajax({
+        url: "{{ url_for('autocomplete') }}",
+        data: { q: query },
+        success: function (data) {
+          $('#suggestions').empty();
+          data.forEach(function (item) {
+            $('#suggestions').append(' <li style="color:#ffffff; font-size: 18px; padding: 5px;">' + item + '</li>');
+          });
+
+          // Attach click event to suggestions
+          $('.suggestions li').on('click', function () {
+            const selectedValue = $(this).text();
+            $('#player-search').val(selectedValue); // Set input value
+            $('#suggestions').empty(); // Clear suggestions
+          });
+        }
+      });
+    } else {
+      $('#suggestions').empty(); // Clear suggestions if query is too short
+    }
+  });
+
+  // Handle form submission
+  $('#search-form').on('submit', function (e) {
+    const query = $('#player-search').val();
+    if (!query) {
+      e.preventDefault();
+      alert("Please enter a player's name.");
+    }
+  });
+});
+
+  </script>
+</body>
+</html>

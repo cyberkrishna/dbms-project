@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  <!-- jQuery UI for Autocomplete -->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Similar Players</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="https://png.pngtree.com/png-clipart/20230513/original/pngtree-cricket-sport-vector-logo-design-transparent-background-for-free-download-png-image_9160032.png" alt="Logo">
+      </div>
+      <div class="navbar-title">Crickstats</div>
+      <ul class="navbar-nav">
+        <li><a class="navbar-link" href="/">Home</a></li>
+        <li><a class="navbar-link" href="/search_player">Player Search</a></li>
+        <li><a class="navbar-link" href="/compare_players">Player Comparison</a></li>
+        <li><a class="navbar-link" href="/search_similar_players">Similar Players</a></li>
+        <!-- Profile Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Profile <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/edit_preferences">Edit Preferences</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Section -->
+    <div class="similar-player-search">
+      <h1>Find Similar Players</h1>
+      {% if is_error %}
+            <div class="alert-box">
+                <p class="alert-message">{{ message }}</p>
+            </div>
+            {% endif %}
+      <p>Type a player's name and choose filters to find similar players.</p>
+
+      <!-- Form to select player and filters -->
+      <form action="{{ url_for('search_similar_players') }}" method="POST">
+        <div class="form-group">
+          <label for="player_name">Enter Player's Name:</label>
+          <input type="text" id="player_name" name="player_name" class="form-control" placeholder="Start typing player name...">
+        </div>
+
+        <!-- Filters -->
+        
+
+        
+
+        
+
+        <button type="submit" class="btn btn-primary">Find Similar Players</button>
+      </form>
+    </div>
+
+    <!-- Autocomplete Script for Player Name Input -->
+    <script>
+      $(document).ready(function() {
+        $("#player_name").autocomplete({
+          source: function(request, response) {
+            $.ajax({
+              url: "{{ url_for('autocomplete_player') }}",
+              data: { q: request.term },
+              success: function(data) {
+                response(data);
+              }
+            });
+          },
+          select: function(event, ui) {
+            $("#player_name").val(ui.item.value);
+            return false;
+          }
+        });
+      });
+    </script>
+
+<style>
+  /* General Reset */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    left:0px
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+
+  .container {
+    padding-top: 100px;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  /* Box Styling */
+  .similar-player-search {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px 30px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    color: #004aad;
+    text-align: center;
+  }
+
+  h3 {
+    color: #004aad;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Button Styling */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #004aad;
+    border: none;
+    border-radius: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #00308f;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary:active {
+    transform: translateY(2px);
+  }
+
+  /* Navbar Styling */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #004aad; /* Primary color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  z-index: 10;
+  padding: 0 20px; /* Space around navbar content */
+  border-bottom: 2px solid #f0f0f0; /* Bottom border for separation */
+}
+
+.navbar-logo img {
+  width: 60px; /* Adjust size for better proportion */
+  height: auto;
+  margin-left:-290px;
+}
+
+.navbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  
+  text-transform: uppercase;
+  margin-left: -500px; /* Adds spacing between logo and title */
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 15px; /* Adds spacing between navbar links */
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  position: relative;
+  text-decoration: none; /* Remove underline for links */
+  color: white;
+  padding: 10px 20px; /* Larger padding for button-like appearance */
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 2px solid transparent; /* Adds subtle border for hover effect */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensures hover effects stay inside the button */
+  transition: all 0.4s ease; /* Smooth transition for hover effects */
+}
+
+.navbar-link:hover {
+  background-color: #ffffff; /* Background changes to white on hover */
+  color: #004aad; /* Text color changes to match the navbar background */
+  border-color: #ffffff; /* Border becomes visible */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle hover shadow */
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
+/* Pseudo-Elements for Animated Border */
+.navbar-link::before,
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  background: white;
+  height: 2px;
+  width: 0;
+  transition: all 1s ease;
+}
+
+.navbar-link::before {
+  top: 0; /* Top border effect */
+  left: 0;
+}
+
+.navbar-link::after {
+  bottom: 0; /* Bottom border effect */
+  right: 0;
+}
+
+.navbar-link:hover::before,
+.navbar-link:hover::after {
+  width: 100%; /* Expands the border effect on hover */
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Dropdown below the toggle */
+  left: 0;
+  background-color: #004aad; /* Matches the navbar's primary color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Initially hidden */
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block; /* Show the dropdown on hover */
+}
+
+.dropdown-menu li a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #00308f;
+  color: white;
+}
+
+  /* Alert Box Styling */
+  .alert-box {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c2c7;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .alert-message {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  footer {
+    position: fixed;
+    text-align: center;
+    background-color: #004aad;
+    padding: 10px 0;
+    width: 100vw;
+    bottom: 0;
+    color: white;
+  }
+</style>
+  </div>
+  <footer>
+    <p>&copy; 2024 Sports Stats Analysis. All rights reserved.</p>
+  </footer>
+</body>
+</html>
